@@ -26,6 +26,19 @@ public class Game
     private ArrayList<Items> item;
         
     /**
+     * 
+     *Main method for running outside of BlueJ 
+     * 
+     */
+    public static void main(String[] args){
+        Game gamePlay = new Game();
+        gamePlay.createRooms();
+        Parser gameParser = new Parser();    
+    
+    }
+    
+    
+    /**
      * Create the game and initialise its internal map.
      */
     public Game() 
