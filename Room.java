@@ -1,7 +1,7 @@
 import java.util.Set;
 import java.util.HashMap;
 import java.util.Iterator;
-
+import java.util.ArrayList;
 /**
  * Class Room - a room in an adventure game.
  *
@@ -12,6 +12,8 @@ import java.util.Iterator;
  * connected to other rooms via exits.  For each existing exit, the room 
  * stores a reference to the neighboring room.
  * 
+ * This class also stores items that belong in each room
+ * 
  * @author  Michael Kölling and David J. Barnes
  * @version 2016.02.29
  */
@@ -19,20 +21,38 @@ import java.util.Iterator;
 public class Room 
 {
     private String description;
-    private HashMap<String, Room> exits;        // stores exits of this room.
-
+    private HashMap<String, Room> exits; // stores exits of this room.
+    
+    //contains the collection of item objects in the room
+    private ArrayList<Items> items;
     /**
      * Create a room described "description". Initially, it has
      * no exits. "description" is something like "a kitchen" or
      * "an open court yard".
      * @param description The room's description.
+     * 
      */
     public Room(String description) 
     {
         this.description = description;
         exits = new HashMap<>();
+        items= new ArrayList<Items>();
+        
     }
-
+    
+    
+    /**
+     * 
+     * add items to the room.
+     * 
+     */
+    public void addItems(Items  i){
+        
+     items.add(i);  
+        
+        
+    }
+    
     /**
      * Define an exit from this room.
      * @param direction The direction of the exit.
@@ -51,7 +71,21 @@ public class Room
     {
         return description;
     }
-
+        
+    /**
+     * 
+     * Get items in the room
+     * @return returnItems returns the items found in a room.
+     */
+    public String getItems(){
+    String returnItems ="Items in the room are:\n ";   
+     for(Items i: items)
+     {
+         returnItems+= i.getItemDescription()+"\n";
+         
+        }
+        return returnItems;
+    }
     /**
      * Return a description of the room in the form:
      *     You are in the kitchen.
@@ -60,7 +94,7 @@ public class Room
      */
     public String getLongDescription()
     {
-        return "You are " + description + ".\n" + getExitString();
+        return "You are " + description + ".\n" +getItems()+".\n" + getExitString();
     }
 
     /**
