@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 /**
  *  This class is the main class of the "World of Zuul" application. 
  *  "World of Zuul" is a very simple, text based adventure game.  Users 
@@ -19,29 +20,99 @@ public class Game
 {
     private Parser parser;
     private Room currentRoom;
+    
+    //stores the previous room
+    private Room previousRoom;
+    private ArrayList<Items> item;
         
+    /**
+     * 
+     *Main method for running outside of BlueJ 
+     * 
+     */
+    public static void main(String[] args){
+        Game gamePlay = new Game();
+        gamePlay.createRooms();
+        Parser gameParser = new Parser();    
+    
+    }
+    
+    
     /**
      * Create the game and initialise its internal map.
      */
     public Game() 
     {
         createRooms();
+        
+        
         parser = new Parser();
     }
 
-    /**
+  /**
      * Create all the rooms and link their exits together.
      */
-    private void createRooms()
+   private void createRooms()
     {
-        Room outside, theater, pub, lab, office;
+        Room outside, theater, pub, lab, office, kitchen, dining_hall,bathroom ;
+        Room game_room,lounge,gym,coffee_shop,field,parking_lot;
       
-        // create the rooms
-        outside = new Room("outside the main entrance of the university");
+       
+        
+        // create new rooms
+        outside = new Room("Outside the main entrance of the Uni");
         theater = new Room("in a lecture theater");
-        pub = new Room("in the campus pub");
-        lab = new Room("in a computing lab");
+        pub  = new Room("on campus pub");
+        lab  = new Room("science lab");
         office = new Room("in the computing admin office");
+        kitchen = new Room("where the food is cooked");
+        dining_hall = new Room("where students have their meals");
+        bathroom = new Room("where you go");
+        game_room = new Room("the fun lounge");
+        lounge = new Room("the boring lounge");
+        gym = new Room("where buff guys and thick girls work out");
+        coffee_shop = new Room("on campus shop near the entrance");
+        field = new Room("field often used for recreation");
+        parking_lot = new Room("car parking");
+        
+        //create items for each room
+        ;
+        
+        Items outside_Item[]= {new Items("water fountain",100)};
+        Items theater_Item[]= {new Items("popcorn", 1)};
+        Items pub_Item[]={new Items("beer",6)};
+        Items lab_Item[]={new Items("tongs",1)};
+        Items office_Item[]={new Items("pen",2)};
+        Items kitchen_Item[]={new Items("pot",8)};
+        Items dining_hall_Item[]={new Items("tray",5)};
+        Items bathroom_Item[]={new Items("paper",40000)};
+        Items game_room_Item[]={new Items("pool ball",500)};
+        Items lounge_Item[]={new Items("newspaper",6)};
+        Items gym_Item[]={new Items("basketball",5)};
+        Items coffee_shop_Item[]={new Items("coffee",6)};
+        Items field_Item[]={new Items("soccer ball" ,6)};
+        Items  parking_lot_Item[] ={new Items("Honda Civic:"+"Its your car...",6)};
+        
+        
+        // create the rooms with the items that are in them.
+        outside = addItemsToRoom(outside,outside_Item);
+        theater = addItemsToRoom(theater,theater_Item);
+        pub  = addItemsToRoom(pub, pub_Item);
+        lab  = addItemsToRoom(lab, lab_Item);
+        office = addItemsToRoom(office,office_Item);
+        kitchen = addItemsToRoom(kitchen,kitchen_Item);
+        dining_hall = addItemsToRoom(dining_hall,dining_hall_Item);
+        bathroom = addItemsToRoom(bathroom,bathroom_Item);
+        game_room = addItemsToRoom(game_room,game_room_Item);
+        lounge = addItemsToRoom(lounge,lounge_Item);
+        gym = addItemsToRoom(gym,gym_Item);
+        coffee_shop = addItemsToRoom(coffee_shop,coffee_shop_Item);
+        field = addItemsToRoom(field,field_Item);
+        parking_lot = addItemsToRoom(parking_lot,parking_lot_Item);
+        
+        
+        
+        
         
         // initialise room exits
         outside.setExit("east", theater);
@@ -53,13 +124,48 @@ public class Game
         pub.setExit("east", outside);
 
         lab.setExit("north", outside);
+        
         lab.setExit("east", office);
 
         office.setExit("west", lab);
-
+        
+        kitchen.setExit("east", dining_hall);
+        
+        dining_hall.setExit("north", field);
+        
+        bathroom.setExit("west", coffee_shop);
+        
+        game_room.setExit("south",lounge);
+        
+        lounge.setExit("south", parking_lot);
+        
+        gym.setExit("east", parking_lot);
+        
+        coffee_shop.setExit("south", outside);
+        
+        field.setExit("north", parking_lot);
+        
+        parking_lot.setExit("west", outside);
+        
         currentRoom = outside;  // start game outside
+        
+        previousRoom= null; // initializes the previous room
     }
-
+    
+   
+    /**
+     * 
+     * Add the items to the room
+     */
+    private Room addItemsToRoom(Room room, Items items[]){
+     for(int i =0;i<items.length; ++i){
+         room.addItems(items[i]);
+         
+        }
+       return room; 
+        
+    }
+    
     /**
      *  Main play routine.  Loops until end of play.
      */
@@ -118,6 +224,18 @@ public class Game
             case QUIT:
                 wantToQuit = quit(command);
                 break;
+                
+            case LOOK:
+                look();
+                break;
+                
+            case EAT:
+                eat();
+                break;
+                
+            case BACK:
+                backRoom();
+                break;
         }
         return wantToQuit;
     }
@@ -159,11 +277,19 @@ public class Game
             System.out.println("There is no door!");
         }
         else {
+            previousRoom =currentRoom;
             currentRoom = nextRoom;
             System.out.println(currentRoom.getLongDescription());
         }
     }
-
+    
+    
+    private void backRoom()
+    {
+        currentRoom=previousRoom;
+        
+        
+    }
     /** 
      * "Quit" was entered. Check the rest of the command to see
      * whether we really quit the game.
@@ -178,5 +304,25 @@ public class Game
         else {
             return true;  // signal that we want to quit
         }
+    }
+    
+    /**
+     * Look will print the description of the room.
+     * 
+     */
+    private void look(){
+    System.out.println(currentRoom.getLongDescription());    
+        
+        
+    }
+    
+    /**
+     * Look will print the description of the room.
+     * 
+     */
+    private void eat(){
+    System.out.println("I'm hungry, is there a Chick-fil-A nearby?");    
+    System.out.println("(NOm-NOm-NOm)");    
+    System.out.println("It wasn't Chick-fil-A but it was pretty good.");    
     }
 }
